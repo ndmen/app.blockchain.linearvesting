@@ -1,0 +1,23 @@
+{
+  "name": "app.blockchain.linearvesting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ndmen/app.blockchain.linearvesting.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ndmen/app.blockchain.linearvesting/issues"
+  },
+  "homepage": "https://github.com/ndmen/app.blockchain.linearvesting#readme",
+  "devDependencies": {
+    "hardhat": "^2.10.1"
+  }
+}
