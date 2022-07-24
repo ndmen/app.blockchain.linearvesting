@@ -6,7 +6,7 @@ const _totalSupply = 100000000; // total token supply
 const _decimals = 18; // token decimals
 
 async function deployContract() {
-    const MyToken = await ethers.getContractFactory("XYZToken");
+    const MyToken = await ethers.getContractFactory("MyToken");
     const myToken = await MyToken.deploy(_totalSupply);
     await myToken.deployed();
     return myToken;

@@ -117,7 +117,7 @@ describe("My Token", () => {
                     "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
                     "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
                 ]);
-                // await xyzToken.enableTokenVesting(_vestingDuration);
+                // await myToken.enableTokenVesting(_vestingDuration);
                 await myToken.releaseToken();
             } catch (err) {
                 e = err;
