@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 
-// Args
 const _totalSupply = 100000000; // total token supply
 const _decimals = 18; // token decimals
 const _totalBeneficiaries = 10; // number of addresses that will recieve token
