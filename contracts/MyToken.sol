@@ -25,6 +25,8 @@ contract MyToken is ERC20, Ownable, LinearVesting {
     uint256 private _vestingDuration;
     // amount of to get released per second
     uint256 private _releaseRate;
+     // timestamp when the token vesting is disabled
+    uint256 private _vestingEnd;
     
  
     constructor(uint256 initialSupply) ERC20("My Token", "My") {
@@ -66,11 +68,12 @@ contract MyToken is ERC20, Ownable, LinearVesting {
         require(_vestingStartTime == 0, "Linear vesting already started!");
         _vestingStartTime = block.timestamp;
         _vestingDuration = vestingDuration_;
+        _vestingEnd = _vestingStartTime + _vestingDuration;
         for (uint256 index_ = 0; index_ < _beneficiaries.length; index_++) {
             Benificiar storage _beneficiar = _beneficiaries[index_];
             _releaseRate = LinearVesting.setReleaseRate(_vestingDuration, _beneficiar.value);
             _beneficiar.vestingStart = _vestingStartTime;
-            _beneficiar.vestingEnd = _vestingStartTime + _vestingDuration;
+            _beneficiar.vestingEnd = _vestingEnd;
             _beneficiar.vestingDuration = _vestingDuration;
             _beneficiar.releaseRate = _releaseRate;
         }
@@ -82,7 +85,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
         uint256 _secondElasped = (block.timestamp - _beneficiar.vestingStart);
         uint256 duration = (_beneficiar.vestingEnd - _beneficiar.vestingStart);
         if (_secondElasped > duration) _secondElasped = duration;
-        return (_secondElasped * _beneficiar.releaseRate) / 60 / 60;
+        return (_secondElasped * _beneficiar.releaseRate);
     }
 
     // add claim value
