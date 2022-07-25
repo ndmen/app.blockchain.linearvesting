@@ -17,13 +17,13 @@ contract MyToken is ERC20, Ownable, LinearVesting {
         uint256 claimedValue;
     }
 
-    // addresses with values where we will disperse token for 30 days(2592000 seconds)
+    // addresses with values where we will disperse token
     Benificiar[] private _beneficiaries;
     // timestamp when the token vesting is enabled
     uint256 private _vestingStartTime;
     // duration for which token will get dispersed(in seconds)
     uint256 private _vestingDuration;
-    // release reate
+    // amount of to get released per second
     uint256 private _releaseRate;
     
  
@@ -76,7 +76,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
         }
     }
 
-    // get total amount of token vested for a benificiary
+    // get amount of to get released per second
     function getBenificiarTokenVested(uint256 index_) public view returns (uint256) {
         Benificiar storage _beneficiar = _beneficiaries[index_];
         uint256 _secondElasped = (block.timestamp - _beneficiar.vestingStart);
@@ -85,7 +85,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
         return (_secondElasped * _beneficiar.releaseRate) / 60 / 60;
     }
 
-    // claim value
+    // add claim value
     function claim(uint256 index_) external onlyOwner {
         // require(IsBeneficiar(), "Sender not beneficiar");
         Benificiar storage _beneficiar = _beneficiaries[index_];
