@@ -6,88 +6,94 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./LinearVesting.sol";
 
 contract MyToken is ERC20, Ownable, LinearVesting {
-    // addresses where we will disperse token for 12 months, upto 10
-    address[] private _beneficiaries;
+
+    struct Benificiar {
+        address benificiar;
+        uint256 value;
+        uint256 vestingStart;
+        uint256 vestingEnd;
+        uint256 vestingDuration;
+        uint256 releaseRate;
+        uint256 claimedValue;
+    }
+
+    // addresses with values where we will disperse token for 30 days(2592000 seconds)
+    Benificiar[] private _beneficiaries;
     // timestamp when the token vesting is enabled
     uint256 private _vestingStartTime;
     // duration for which token will get dispersed(in seconds)
     uint256 private _vestingDuration;
-    // Token release event
-    event TokenRelease(uint256 releasedAmount);
-
+    // release reate
+    uint256 private _releaseRate;
+    
+ 
     constructor(uint256 initialSupply) ERC20("My Token", "My") {
         _mint(msg.sender, initialSupply * (10**decimals()));
     }
 
-    // returns benificiaries that will recieve tokens
-    function beneficiaries() public view returns (address[] memory) {
-        return _beneficiaries;
-    }
-
-    // returns timestamp when token vesting is enabled
-    function vestingStartTime() public view returns (uint256) {
-        return _vestingStartTime;
-    }
-
-    // returns timestamp when token vesting is enabled
-    function vestingDuration() public view returns (uint256) {
-        return _vestingDuration;
-    }
-
-    // add beneficiaries that will recieve tokens
-    function addBenificiaries(address[] memory beneficiaries_)
+    // add beneficiaries
+    function addBenificiar(address address_, uint256 value_)
         external
         onlyOwner
     {
-        require(
-            beneficiaries_.length <= 10,
-            "You can add upto 10 benificiary!"
+        value_ = value_ * (10**18);
+        _beneficiaries.push(
+            Benificiar({
+                benificiar: address_,
+                value: value_,
+                vestingStart: 0,
+                vestingEnd: 0,
+                vestingDuration: 0,
+                releaseRate: 0,
+                claimedValue: 0
+            })
         );
-        for (uint256 idx = 0; idx < beneficiaries_.length; idx++) {
-            _beneficiaries.push(beneficiaries_[idx]);
-        }
     }
 
-    // start vesting token for the added beneficiaries
-    function enableTokenVesting(uint256 vestingDuration_) external onlyOwner {
-        require(_vestingStartTime == 0, "Token vesting already started!");
+    // get beneficiaries
+    function getBenificiaries() public view returns (Benificiar[] memory) {
+        return _beneficiaries;
+    }
+
+    // get beneficiar
+    function getBenificiar(uint256 index_) public view returns (address benificiar, uint256 value) {
+        Benificiar storage _beneficiar = _beneficiaries[index_];
+        return (_beneficiar.benificiar, _beneficiar.value);
+    }
+
+    // add linear vesting
+    function addLinearVesting(uint256 vestingDuration_) external onlyOwner {
+        require(_vestingStartTime == 0, "Linear vesting already started!");
         _vestingStartTime = block.timestamp;
         _vestingDuration = vestingDuration_;
-        LinearVesting.setAmount(totalSupply(), _beneficiaries.length);
-        LinearVesting.setReleaseRate(_vestingDuration);
-    }
-
-    // returns token vested for a benificiary
-    function getVestedAmount() public view returns (uint256) {
-        return
-            LinearVesting.tokenVested(
-                _vestingStartTime,
-                _vestingStartTime + _vestingDuration
-            );
-    }
-
-    // returns true if msg.sender is a beneficiary
-    function isBeneficiary() public view returns (bool) {
-        for (uint256 idx = 0; idx < _beneficiaries.length; idx++) {
-            if (msg.sender == _beneficiaries[idx]) return true;
+        for (uint256 index_ = 0; index_ < _beneficiaries.length; index_++) {
+            Benificiar storage _beneficiar = _beneficiaries[index_];
+            _releaseRate = LinearVesting.setReleaseRate(_vestingDuration, _beneficiar.value);
+            _beneficiar.vestingStart = _vestingStartTime;
+            _beneficiar.vestingEnd = _vestingStartTime + _vestingDuration;
+            _beneficiar.vestingDuration = _vestingDuration;
+            _beneficiar.releaseRate = _releaseRate;
         }
-        return false;
     }
 
-    // throws if called by any account other than the beneficiary
-    modifier onlyBeneficiaries() {
-        require(isBeneficiary(), "You are not a benificiary!");
-        _;
+    // get total amount of token vested for a benificiary
+    function getBenificiarTokenVested(uint256 index_) public view returns (uint256) {
+        Benificiar storage _beneficiar = _beneficiaries[index_];
+        uint256 _secondElasped = (block.timestamp - _beneficiar.vestingStart);
+        uint256 duration = (_beneficiar.vestingEnd - _beneficiar.vestingStart);
+        if (_secondElasped > duration) _secondElasped = duration;
+        return (_secondElasped * _beneficiar.releaseRate) / 60 / 60;
     }
 
-    // transfer token held by the owner to the beneficiary who calls this
-    // will succed only if there is some releasable token for a beneficiary
-    function releaseToken() external onlyBeneficiaries {
-        uint256 releasableToken = getVestedAmount() -
-            LinearVesting.tokenReleased(msg.sender);
-        require(releasableToken > 0, "No tokens to release");
-        _transfer(owner(), msg.sender, releasableToken);
-        LinearVesting.updateReleasedAmount(releasableToken);
-        emit TokenRelease(releasableToken);
+    // claim value
+    function claim(uint256 index_) external onlyOwner {
+        // require(IsBeneficiar(), "Sender not beneficiar");
+        Benificiar storage _beneficiar = _beneficiaries[index_];
+        _beneficiar.claimedValue = getBenificiarTokenVested(index_);
+    }
+
+    // withdraw claimed value
+    function withdraw(uint256 tokens)  external payable onlyOwner {
+        payable(msg.sender).transfer(tokens);
     }
 }
