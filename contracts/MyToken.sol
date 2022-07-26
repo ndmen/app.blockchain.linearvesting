@@ -34,10 +34,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
     }
 
     // add beneficiaries
-    function addBenificiar(address address_, uint256 value_)
-        external
-        onlyOwner
-    {
+    function addBenificiar(address address_, uint256 value_) external onlyOwner returns (bool) {
         value_ = value_ * (10**18);
         _beneficiaries.push(
             Benificiar({
@@ -50,6 +47,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
                 claimedValue: 0
             })
         );
+        return true;
     }
 
     // get beneficiaries
@@ -64,7 +62,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
     }
 
     // add linear vesting
-    function addLinearVesting(uint256 vestingDuration_) external onlyOwner {
+    function addLinearVesting(uint256 vestingDuration_) external onlyOwner returns (bool) {
         require(_vestingStartTime == 0, "Linear vesting already started!");
         _vestingStartTime = block.timestamp;
         _vestingDuration = vestingDuration_;
@@ -77,6 +75,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
             _beneficiar.vestingDuration = _vestingDuration;
             _beneficiar.releaseRate = _releaseRate;
         }
+        return true;
     }
 
     // get amount of to get released per second
@@ -89,14 +88,16 @@ contract MyToken is ERC20, Ownable, LinearVesting {
     }
 
     // add claimed value
-    function claim(uint256 index_) external onlyOwner {
+    function claim(uint256 index_) external onlyOwner returns (bool) {
         // require(IsBeneficiar(), "Sender not beneficiar");
         Benificiar storage _beneficiar = _beneficiaries[index_];
         _beneficiar.claimedValue = getBenificiarTokenVested(index_);
+        return true;
     }
 
     // withdraw claimed value
-    function withdraw(uint256 value_)  external payable onlyOwner {
+    function withdraw(uint256 value_)  external payable onlyOwner returns (bool) {
         payable(msg.sender).transfer(value_);
+        return true;
     }
 }

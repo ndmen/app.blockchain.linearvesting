@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx hardhat test",
+    "deploy": "npx hardhat --network rinkeby run scripts/deploy.ts",
+    "compile": "npx hardhat compile"
   },
   "repository": {
     "type": "git",

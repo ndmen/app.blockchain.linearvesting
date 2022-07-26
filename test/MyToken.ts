@@ -9,9 +9,9 @@ let linearVesting: Contract;
 
 const _totalSupply = 1000; // total token supply
 const _decimals = 18; // token decimals
-const _totalBeneficiaries = 10; // number of addresses that will recieve token
-const _vestingDuration = 31536000; // duration for which token will get dispersed(in seconds)
-const _releaseRate = 19.025875190258752; // token to get released per minute for above token supply, beneficiary, and vesting duration
+const _vestingDuration = 600; // duration for which token will get dispersed(in seconds)
+const _value = 50**18;
+const _releaseRate = 83333333333333333; // token to get released per second for above token supply, beneficiary, and vesting duration
 
 async function deployContract(name: string, ...args: any) {
     const Contract = await ethers.getContractFactory(name);
@@ -36,71 +36,28 @@ describe("My Token", () => {
         })
     })
 
-    describe("#addBeneficiaries()", () => {
-        it("should check beneficiaries added succesfully", async function () {
-            await myToken.addBenificiaries([
-                "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-            ]);
-            const b = (await myToken.beneficiaries())[0];
-            expect(b.toLowerCase()).to.equal("0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199");
+    describe("#addBenificiar()", () => {
+        it("should return true if benificiar was added", async function () {
+            expect(await myToken.addBenificiar("0xe2cdfDAE0144F1AE8396e65c263F1b744771a574", "50")).to.equal(true);
         })
     })
 
-    describe("#addTokenVesting()", function () {
-        it("should check the release rate", async function () {
-            await myToken.enableTokenVesting(_vestingDuration);
-            expect((await myToken.releaseRate()) / 10 ** _decimals).to.equal((_totalSupply * 60) / _vestingDuration);
-        })
-
-        it("should fail at enabling token vesting as it alreay started", async function () {
-            let e: any;
-            try {
-                await myToken.enableTokenVesting(_vestingDuration);
-            }
-            catch (err) {
-                e = err;
-            }
-            expect(e.message.includes("Token vesting already started!")).to.equal(true);
+    describe("#addLinearVesting()", function () {
+        it("should return true if linear vesting was started", async function () {
+            expect(await myToken.addLinearVesting(_vestingDuration)).to.equal(true);
         })
     })
 
-    describe("#getVestedAmount()", function () {
-        it("should return token vested equal to 0 for time elapsed equal to 0 minute", async function () {
-            expect((await myToken.getVestedAmount()) / 10 ** 18).to.equal(0);
+    describe("#claim()", function () {
+        it("should return true if linear value was added to calimed value", async function () {
+            expect(await myToken.claim()).to.equal(true);
         })
     })
 
 
-    describe("#getReleasedAmount()", function () {
-        it("should return the amount of token released for a benificiary", async function () {
-            expect(await myToken.getReleasedAmount("0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199")).to.equal(0);
-        })
-    })
-
-    describe("#releaseToken()", function () {
-        it("should fail to release token as called by account not a beneficiary", async function () {
-            let e: any;
-            try {
-                await myToken.releaseToken();
-            } catch (err) {
-                e = err
-            }
-            expect(e.message.includes("You are not a benificiary!")).to.equal(true);
-        })
-
-        it("should fail to release token saying NO TOKEN TO RELEASE", async function () {
-            let e: any;
-            try {
-                await myToken.addBenificiaries([
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
-                ]);
-                // await myToken.enableTokenVesting(_vestingDuration);
-                await myToken.releaseToken();
-            } catch (err) {
-                e = err;
-            }
-            expect(e.message.includes("No tokens to release")).to.equal(true);
+    describe("#withdraw()", function () {
+        it("should return true if value was withdraw", async function () {
+            expect(await myToken.withdraw(1000)).to.equal(true);
         })
     })
 });
@@ -110,43 +67,10 @@ describe("Linear Vesting", () => {
         linearVesting = await deployContract("LinearVesting");
     })
 
-    describe("#setAmount()", function () {
-        it("should assign value to the variable _amount", async function () {
-            await linearVesting.setAmount(_totalSupply, _totalBeneficiaries);
-            expect(await linearVesting.amount()).to.equal(_totalSupply / _totalBeneficiaries);
-        })
-
-        it("should fail at assigning value to the variable _amount", async function () {
-            let e: any;
-            try {
-                await linearVesting.setAmount(_totalSupply, _totalBeneficiaries);
-            } catch (err) {
-                e = err;
-            }
-            expect(e.message.includes("_amount: Already Initialized!")).to.equal(true);
-        })
-    })
-
     describe("#setReleaseRate()", function () {
         it("should assign value to the variable _releaseRate", async function () {
-            await linearVesting.setReleaseRate(_vestingDuration);
+            await linearVesting.setReleaseRate(_vestingDuration, _value);
             expect(await linearVesting.releaseRate()).to.equal(19);
-        })
-
-        it("should fail at assigning value to the variable _releaseRate", async function () {
-            let e: any;
-            try {
-                await linearVesting.setReleaseRate(_vestingDuration);
-            } catch (err) {
-                e = err;
-            }
-            expect(e.message.includes("_releaseRate: Already Initialized!")).to.equal(true);
-        })
-    })
-
-    describe("#tokenReleased()", function () {
-        it("should return the amount of token released for a beneficiary", async function () {
-            expect((await linearVesting.tokenReleased("0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199"))).to.equal(0);
         })
     })
 });
