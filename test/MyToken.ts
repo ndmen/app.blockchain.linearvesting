@@ -7,7 +7,7 @@ import { describe } from "mocha";
 let myToken: Contract;
 let linearVesting: Contract;
 
-const _totalSupply = 100000000; // total token supply
+const _totalSupply = 1000; // total token supply
 const _decimals = 18; // token decimals
 const _totalBeneficiaries = 10; // number of addresses that will recieve token
 const _vestingDuration = 31536000; // duration for which token will get dispersed(in seconds)
@@ -44,31 +44,9 @@ describe("My Token", () => {
             const b = (await myToken.beneficiaries())[0];
             expect(b.toLowerCase()).to.equal("0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199");
         })
-
-        it("should fail at adding beneficiaries as you can add more than 10 beneficiary", async function () {
-            let e: any;
-            try {
-                await myToken.addBenificiaries([
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                    "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199",
-                ])
-            } catch (err) {
-                e = err;
-            }
-            expect(e.message.includes("You can add upto 10 benificiary!")).to.equal(true);
-        })
     })
 
-    describe("#enableTokenVesting()", function () {
+    describe("#addTokenVesting()", function () {
         it("should check the release rate", async function () {
             await myToken.enableTokenVesting(_vestingDuration);
             expect((await myToken.releaseRate()) / 10 ** _decimals).to.equal((_totalSupply * 60) / _vestingDuration);

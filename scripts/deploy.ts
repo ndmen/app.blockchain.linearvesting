@@ -2,7 +2,7 @@ import "@nomiclabs/hardhat-ethers";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
 
-const _totalSupply = 100000000; // total token supply
+const _totalSupply = 1000; // total token supply
 const _decimals = 18; // token decimals
 
 async function deployContract() {
