@@ -68,9 +68,8 @@ describe("Linear Vesting", () => {
     })
 
     describe("#setReleaseRate()", function () {
-        it("should assign value to the variable _releaseRate", async function () {
-            await linearVesting.setReleaseRate(_vestingDuration, _value);
-            expect(await linearVesting.releaseRate()).to.equal(19);
+        it("should return release rate in 1 second", async function () {
+            expect(await linearVesting.setReleaseRate(_vestingDuration, _value)).to.equal(_releaseRate);
         })
     })
 });
