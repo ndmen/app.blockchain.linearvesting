@@ -88,7 +88,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
         return (_secondElasped * _beneficiar.releaseRate);
     }
 
-    // add claim value
+    // add claimed value
     function claim(uint256 index_) external onlyOwner {
         // require(IsBeneficiar(), "Sender not beneficiar");
         Benificiar storage _beneficiar = _beneficiaries[index_];
@@ -96,7 +96,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
     }
 
     // withdraw claimed value
-    function withdraw(uint256 tokens)  external payable onlyOwner {
-        payable(msg.sender).transfer(tokens);
+    function withdraw(uint256 value_)  external payable onlyOwner {
+        payable(msg.sender).transfer(value_);
     }
 }
