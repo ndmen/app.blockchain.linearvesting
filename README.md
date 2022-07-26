@@ -16,8 +16,8 @@ Functions:
 3. claim(uint256 index_) - add claimed value
 4. withdraw(uint256 value_) - withdraw claimed value
 
-Data:
 Deplyed address: https://rinkeby.etherscan.io/address/0xe2cdfDAE0144F1AE8396e65c263F1b744771a574
+
 Deployed token: https://rinkeby.etherscan.io/token/0xb9c286126cbf8286f2c9b77b84ab9f33cd5faad4?a=0xe2cdfDAE0144F1AE8396e65c263F1b744771a574
 
 ## Installation
