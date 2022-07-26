@@ -50,7 +50,7 @@ describe("My Token", () => {
 
     describe("#claim()", function () {
         it("should return true if linear value was added to calimed value", async function () {
-            expect(await myToken.claim()).to.equal(true);
+            expect(await myToken.claim(0)).to.equal(true);
         })
     })
 
