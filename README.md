@@ -26,10 +26,12 @@ Deployed token: https://rinkeby.etherscan.io/token/0xb9c286126cbf8286f2c9b77b84a
 $ npm install
 ```
 
-## Running the app
+## Deploing contract
+
+Create your .env file with data: YOUR_ALCHEMY_API_URL, YOUR_PRIVATE_RINKEBY_ACCOUNT_KEY. And run command below:
 
 ```bash
-$ npm start
+$ npm run deploy
 ```
 
 ## Test
