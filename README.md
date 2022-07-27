@@ -1,6 +1,8 @@
 # app.blockchain.linearvesting
 
 ## Description
+See video how it works https://youtu.be/VWKwIiYkYVs
+
 A decentralized application to interact with the MyToken, an 18 decimal token with a total supply of 1000.
 
 Token deployer can add Beneficiaries them addresses and amount. The token release schedule will be per second. 
