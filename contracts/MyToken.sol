@@ -84,7 +84,7 @@ contract MyToken is ERC20, Ownable, LinearVesting {
         uint256 _secondElasped = (block.timestamp - _beneficiar.vestingStart);
         uint256 duration = (_beneficiar.vestingEnd - _beneficiar.vestingStart);
         if (_secondElasped > duration) _secondElasped = duration;
-        return (_secondElasped * _beneficiar.releaseRate);
+        return (_secondElasped * _beneficiar.releaseRate) / 60 / 60;
     }
 
     // add claimed value

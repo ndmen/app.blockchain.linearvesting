@@ -8,7 +8,7 @@ contract LinearVesting {
 
     // get _releaseRate, amount of to get released per second
     function setReleaseRate(uint256 vestingDuration_, uint256 value_) public returns (uint256) {
-        _releaseRate = value_ / vestingDuration_;
+        _releaseRate = (value_ * 60 * 60) / vestingDuration_;
         return _releaseRate;
     }
 }
