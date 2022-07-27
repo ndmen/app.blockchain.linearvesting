@@ -13,6 +13,7 @@ Deployed to Rinkeby test network.
 Functions:
 1. addBenificiar(address address_, uint256 value_) - add Beneficiaries
 2. addLinearVesting(uint256 vestingDuration_) - add Linear Vesting
+3. getBenificiarTokenVested(uint256 index_) - chek benificiar value
 3. claim(uint256 index_) - add claimed value
 4. withdraw(uint256 value_) - withdraw claimed value
 
